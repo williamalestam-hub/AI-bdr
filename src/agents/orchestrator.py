@@ -15,10 +15,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from src.tools.hubspot_client import HubSpotClient
+from src.sandbox.client_factory import get_hubspot_client, describe_mode
 from src.agents.enrichment_agent import enrich_contact
 from src.agents.segmentation_agent import segment_lead
 from src.agents.email_writer_agent import write_email
+from src.agents.prioritizer import score_lead
 
 
 SEQUENCE_EMAIL_STEPS = {0, 4, 10}
@@ -30,7 +31,7 @@ def should_process_today(enriched: dict) -> bool:
 
 
 def run_pipeline(dry_run: bool = False) -> dict:
-    hs = HubSpotClient()
+    hs = get_hubspot_client()
     leads = hs.fetch_all_trigger_leads()
 
     digest = []
@@ -48,6 +49,7 @@ def run_pipeline(dry_run: bool = False) -> dict:
 
             full_lead = {**enriched, **segmented}
             email_draft = write_email(full_lead, step)
+            priority = score_lead(enriched, segmented)
 
             digest.append({
                 "contact_id": contact_id,
@@ -56,6 +58,8 @@ def run_pipeline(dry_run: bool = False) -> dict:
                 "tier": segmented["tier"],
                 "trigger_type": enriched["trigger_type"],
                 "sequence_step": step,
+                "priority_score": priority["priority_score"],
+                "priority_reasons": priority["reasons"],
                 "email_draft": email_draft,
             })
 
@@ -65,8 +69,11 @@ def run_pipeline(dry_run: bool = False) -> dict:
         except Exception as e:
             errors.append({"contact_id": contact_id, "error": str(e)})
 
+    digest.sort(key=lambda x: x["priority_score"], reverse=True)
+
     result = {
         "run_at": datetime.now(timezone.utc).isoformat(),
+        "mode": describe_mode(),
         "dry_run": dry_run,
         "total_leads_fetched": len(leads),
         "total_queued": len(digest),

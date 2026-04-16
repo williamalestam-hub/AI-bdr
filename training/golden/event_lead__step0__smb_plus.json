@@ -1,0 +1,10 @@
+{
+  "lead_fixture": "event_lead_001",
+  "step": 0,
+  "expected": {
+    "subject": "Tom, quick note from Legora",
+    "body": "Hi Tom,\n\nGreat to know you connected with the Legora team recently.\n\nFirms like Hengeler Mueller are already using Legora to cut contract review time by around 60%.\n\nIf useful, grab a 25-minute walkthrough here: [CALENDLY_LINK].\n\nWilliam\nLegora",
+    "cta_type": "demo"
+  },
+  "notes": "Hengeler Mueller is itself a known Legora-adjacent firm, 330 lawyers, DE. SMB+ demo CTA. Event leads go cold fast — prioritise."
+}

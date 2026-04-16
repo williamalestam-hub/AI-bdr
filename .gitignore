@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+.env
+.env.local
+
+# Sandbox runtime outputs
+runs/*.json
+runs/*.jsonl
+training/runs/*.json
+training/runs/*.jsonl
+
+# Synthetic fixture data (regenerate with scripts/generate_contacts.py)
+fixtures/contacts/synth_*.json
+
+# Keep the directory markers
+!runs/.gitkeep
+!training/runs/.gitkeep

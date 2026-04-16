@@ -12,8 +12,6 @@ import os
 import sys
 from pathlib import Path
 
-import anthropic
-
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 
@@ -138,31 +136,31 @@ def write_email(lead: dict, step: int) -> dict:
     if step not in (0, 4, 10):
         raise ValueError(f"sequence_step must be 0, 4, or 10, got {step}")
 
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-    model = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6")
+    from src.sandbox.client_factory import get_llm
 
-    message = client.messages.create(
-        model=model,
-        max_tokens=600,
-        system=_build_system_prompt(),
-        messages=[{"role": "user", "content": _build_user_prompt(lead, step)}],
-    )
+    client = get_llm()
 
-    raw = message.content[0].text.strip()
-
-    # Strip markdown code fences if present
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-        raw = raw.strip()
-
-    result = json.loads(raw)
+    if getattr(client, "is_mock", False):
+        result = client.generate_email(lead, step)
+    else:
+        model = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6")
+        message = client.messages.create(
+            model=model,
+            max_tokens=600,
+            system=_build_system_prompt(),
+            messages=[{"role": "user", "content": _build_user_prompt(lead, step)}],
+        )
+        raw = message.content[0].text.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+            raw = raw.strip()
+        result = json.loads(raw)
 
     body = result.get("body", "")
     result["word_count"] = len(body.split())
 
-    # Enforce forbidden words (soft check — log warning, don't crash)
     lower_body = body.lower()
     found = [w for w in FORBIDDEN_WORDS if w in lower_body]
     if found:

@@ -1,0 +1,10 @@
+{
+  "lead_fixture": "demo_request_001",
+  "step": 0,
+  "expected": {
+    "subject": "Rachel, quick note from Legora",
+    "body": "Hi Rachel,\n\nThanks for requesting a demo of Legora — I wanted to make sure you got the right introduction.\n\nFirms like Goodwin are already using Legora to cut contract review time by around 60%, and it sounds like you may be exploring something similar.\n\nIf useful, grab a 25-minute walkthrough here: [CALENDLY_LINK].\n\nWilliam\nLegora",
+    "cta_type": "demo"
+  },
+  "notes": "SMB+ (1200 lawyers) US-based firm. Demo request = hottest trigger, so keep it short, respectful, direct CTA."
+}

@@ -8,14 +8,12 @@ Usage:
 import argparse
 import json
 import sys
-import os
 from pathlib import Path
 
 # Allow running from repo root
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from src.tools.hubspot_client import HubSpotClient
-from src.tools.clay_client import ClayClient
+from src.sandbox.client_factory import get_hubspot_client, get_clay_client
 
 
 TRIGGER_TYPE_MAP = {
@@ -28,7 +26,7 @@ TRIGGER_TYPE_MAP = {
 
 
 def enrich_contact(contact_id: str) -> dict:
-    hs = HubSpotClient()
+    hs = get_hubspot_client()
     contact = hs.get_contact(contact_id)
     props = contact.get("properties", {})
 
@@ -47,10 +45,9 @@ def enrich_contact(contact_id: str) -> dict:
     enriched_company = company_name
     enriched_domain = company_domain
 
-    clay_api_key = os.getenv("CLAY_API_KEY")
-    if clay_api_key and company_domain:
+    if company_domain:
         try:
-            clay = ClayClient(api_key=clay_api_key)
+            clay = get_clay_client()
             raw = clay.enrich_company(domain=company_domain, company_name=company_name)
             firm = clay.extract_firm_data(raw)
 

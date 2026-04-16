@@ -1,0 +1,10 @@
+{
+  "lead_fixture": "webinar_no_show_001",
+  "step": 0,
+  "expected": {
+    "subject": "James, quick note from Legora",
+    "body": "Hi James,\n\nI saw you registered for our recent webinar but couldn't make it — completely understandable.\n\nLegora is an AI contract review platform — firms use it to cut review time substantially without sacrificing accuracy.\n\nIf useful, grab a 25-minute walkthrough here: [CALENDLY_LINK].\n\nWilliam\nLegora",
+    "cta_type": "demo"
+  },
+  "notes": "BAHR is a real Legora client so we skip the local-client reference to avoid being awkward. 180 lawyers = SMB+ tier."
+}

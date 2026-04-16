@@ -1,0 +1,21 @@
+{
+  "id": "webinar_no_show_001",
+  "_trigger_type": "webinar_no_show",
+  "properties": {
+    "email": "james.hartley@bahr.no",
+    "firstname": "James",
+    "lastname": "Hartley",
+    "company": "BAHR",
+    "website": "bahr.no",
+    "phone": "+47 21 00 00 00",
+    "country": "Norway",
+    "hs_lead_status": "NEW",
+    "lifecyclestage": "lead",
+    "hs_lead_source": "webinar",
+    "webinar_registered": "true",
+    "webinar_attended": "false",
+    "createdate": "2026-04-08T09:00:00Z",
+    "bdr_sequence_step": "0",
+    "bdr_trigger_type": "webinar_no_show"
+  }
+}

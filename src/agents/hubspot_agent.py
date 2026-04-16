@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from src.tools.hubspot_client import HubSpotClient
+from src.sandbox.client_factory import get_hubspot_client
 
 
 def main():
@@ -34,7 +34,7 @@ def main():
     parser.add_argument("--notes", default="")
     args = parser.parse_args()
 
-    hs = HubSpotClient()
+    hs = get_hubspot_client()
 
     if args.action == "fetch-triggers":
         leads = hs.fetch_all_trigger_leads()

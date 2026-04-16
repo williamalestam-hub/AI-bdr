@@ -1,0 +1,20 @@
+{
+  "id": "demo_request_001",
+  "_trigger_type": "demo_request",
+  "properties": {
+    "email": "rachel.okafor@goodwinlaw.com",
+    "firstname": "Rachel",
+    "lastname": "Okafor",
+    "company": "Goodwin Procter",
+    "website": "goodwinlaw.com",
+    "phone": "+1 212 555 0142",
+    "country": "United States",
+    "hs_lead_status": "NEW",
+    "lifecyclestage": "lead",
+    "hs_lead_source": "demo_request",
+    "demo_request_date__c": "2026-04-15T14:30:00Z",
+    "createdate": "2026-04-15T14:30:00Z",
+    "bdr_sequence_step": "0",
+    "bdr_trigger_type": "demo_request"
+  }
+}

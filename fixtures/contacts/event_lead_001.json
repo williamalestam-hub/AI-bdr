@@ -1,0 +1,19 @@
+{
+  "id": "event_lead_001",
+  "_trigger_type": "event_lead",
+  "properties": {
+    "email": "tom.becker@hengeler.de",
+    "firstname": "Tom",
+    "lastname": "Becker",
+    "company": "Hengeler Mueller",
+    "website": "hengeler.de",
+    "phone": "+49 69 17095 0",
+    "country": "Germany",
+    "hs_lead_status": "NEW",
+    "lifecyclestage": "lead",
+    "hs_lead_source": "event",
+    "createdate": "2026-04-16T08:00:00Z",
+    "bdr_sequence_step": "0",
+    "bdr_trigger_type": "event_lead"
+  }
+}

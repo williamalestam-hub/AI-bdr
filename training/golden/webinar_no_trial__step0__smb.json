@@ -1,0 +1,10 @@
+{
+  "lead_fixture": "webinar_no_trial_001",
+  "step": 0,
+  "expected": {
+    "subject": "Priya, quick note from Legora",
+    "body": "Hi Priya,\n\nI noticed you joined our webinar last week — hoping it was useful.\n\nFirms like BAHR are already using Legora to cut contract review time by around 60%.\n\nWe run a live demo webinar each week — save a seat here: [WEBINAR_LINK].\n\nWilliam\nLegora",
+    "cta_type": "webinar"
+  },
+  "notes": "6-lawyer UK firm → SMB tier → webinar CTA. Webinar attendee but no trial means interest is warm but not hot."
+}

@@ -1,0 +1,10 @@
+{
+  "lead_fixture": "backlog_001",
+  "step": 0,
+  "expected": {
+    "subject": "Sophie, quick note from Legora",
+    "body": "Hi Sophie,\n\nI wanted to reach out as Legora has evolved a lot since you first came across us.\n\nFirms like BAHR are already using Legora to cut contract review time by around 60%.\n\nWe run a live demo webinar each week — save a seat here: [WEBINAR_LINK].\n\nWilliam\nLegora",
+    "cta_type": "webinar"
+  },
+  "notes": "4-lawyer UK chambers from late-2024 backlog. SMB webinar CTA, soft re-engagement tone."
+}

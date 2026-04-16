@@ -1,0 +1,19 @@
+{
+  "id": "backlog_001",
+  "_trigger_type": "backlog",
+  "properties": {
+    "email": "sophie.laurent@barton-chambers.co.uk",
+    "firstname": "Sophie",
+    "lastname": "Laurent",
+    "company": "Barton Chambers",
+    "website": "barton-chambers.co.uk",
+    "phone": "+44 20 7353 7000",
+    "country": "United Kingdom",
+    "hs_lead_status": "OPEN",
+    "lifecyclestage": "lead",
+    "hs_lead_source": "organic_search",
+    "createdate": "2024-09-12T11:00:00Z",
+    "bdr_sequence_step": "0",
+    "bdr_trigger_type": "backlog"
+  }
+}

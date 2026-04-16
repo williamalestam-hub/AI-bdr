@@ -1,0 +1,22 @@
+{
+  "id": "webinar_no_trial_001",
+  "_trigger_type": "webinar_no_trial",
+  "properties": {
+    "email": "priya.sharma@helmsleylaw.co.uk",
+    "firstname": "Priya",
+    "lastname": "Sharma",
+    "company": "Helmsley & Co",
+    "website": "helmsleylaw.co.uk",
+    "phone": "+44 20 7946 0123",
+    "country": "United Kingdom",
+    "hs_lead_status": "OPEN",
+    "lifecyclestage": "lead",
+    "hs_lead_source": "webinar",
+    "webinar_registered": "true",
+    "webinar_attended": "true",
+    "free_trial_started": "false",
+    "createdate": "2026-04-10T10:00:00Z",
+    "bdr_sequence_step": "0",
+    "bdr_trigger_type": "webinar_no_trial"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "goodwinlaw.com": {
+    "name": "Goodwin Procter",
+    "domain": "goodwinlaw.com",
+    "lawyer_count": 1200,
+    "country": "United States",
+    "practice_areas": ["Corporate", "M&A", "Technology", "Banking & Finance"]
+  },
+  "bahr.no": {
+    "name": "BAHR",
+    "domain": "bahr.no",
+    "lawyer_count": 180,
+    "country": "Norway",
+    "practice_areas": ["Corporate", "M&A", "Banking & Finance", "Tax"]
+  },
+  "helmsleylaw.co.uk": {
+    "name": "Helmsley & Co",
+    "domain": "helmsleylaw.co.uk",
+    "lawyer_count": 6,
+    "country": "United Kingdom",
+    "practice_areas": ["Employment", "Commercial"]
+  },
+  "hengeler.de": {
+    "name": "Hengeler Mueller",
+    "domain": "hengeler.de",
+    "lawyer_count": 330,
+    "country": "Germany",
+    "practice_areas": ["Corporate", "M&A", "Banking & Finance", "Tax"]
+  },
+  "barton-chambers.co.uk": {
+    "name": "Barton Chambers",
+    "domain": "barton-chambers.co.uk",
+    "lawyer_count": 4,
+    "country": "United Kingdom",
+    "practice_areas": ["Litigation", "Criminal"]
+  },
+  "minterellison.com": {
+    "name": "MinterEllison",
+    "domain": "minterellison.com",
+    "lawyer_count": 850,
+    "country": "Australia",
+    "practice_areas": ["Corporate", "M&A", "Real Estate"]
+  }
+}
