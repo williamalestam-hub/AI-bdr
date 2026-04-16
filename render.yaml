@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: legora-bdr
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python ui/app.py
+    healthCheckPath: /api/status
+    envVars:
+      - key: BDR_MODE
+        value: mock
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: HUBSPOT_ACCESS_TOKEN
+        sync: false
+      - key: CLAY_API_KEY
+        sync: false
