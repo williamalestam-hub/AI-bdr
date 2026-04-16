@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 FORBIDDEN_WORDS = {"innovative", "excited", "leverage", "synergy", "revolutionise", "revolutionize"}
 
+# Kept for step-4 reference; no longer used as step-0 openers
 TRIGGER_OPENINGS = {
     "demo_request": "Thanks for requesting a demo of Legora — I wanted to make sure you got the right introduction.",
     "webinar_no_show": "I saw you registered for our recent webinar but couldn't make it — completely understandable.",
@@ -25,16 +26,13 @@ TRIGGER_OPENINGS = {
     "backlog": "I wanted to reach out as Legora has evolved a lot since you first came across us.",
 }
 
+# Used in step-4 body as a local social-proof reference
 COUNTRY_CLIENT_MAP = {
-    "GB": "BAHR",
-    "UK": "BAHR",
-    "United Kingdom": "BAHR",
-    "US": "Goodwin",
-    "United States": "Goodwin",
-    "AU": "MinterEllison",
-    "Australia": "MinterEllison",
-    "DE": "Hengeler Mueller",
-    "Germany": "Hengeler Mueller",
+    "GB": "BAHR", "UK": "BAHR", "United Kingdom": "BAHR",
+    "US": "Goodwin", "United States": "Goodwin",
+    "AU": "MinterEllison", "Australia": "MinterEllison",
+    "DE": "Hengeler Mueller", "Germany": "Hengeler Mueller",
+    "Norway": "BAHR", "NO": "BAHR",
 }
 
 STEP_SUBJECTS = {
@@ -43,16 +41,23 @@ STEP_SUBJECTS = {
     10: "Closing the loop, {first_name}",
 }
 
+# Global reference firms used in step-0 (proven to resonate across markets)
+GLOBAL_REFERENCE_FIRMS = "Goodwin and White & Case"
+
 
 def _get_local_client(country: str) -> str | None:
     for key, val in COUNTRY_CLIENT_MAP.items():
-        if key.lower() in country.lower():
+        if key.lower() in (country or "").lower():
             return val
     return None
 
 
 def _build_system_prompt() -> str:
-    return """You are writing outreach emails for Legora, an AI contract review platform for law firms.
+    return """You are writing outreach emails for William at Legora, an AI contract review platform for law firms.
+
+Voice: You write like a practicing attorney speaking to a peer, not a vendor pitching a product.
+Credibility comes from understanding the day-to-day work of the recipient's practice area —
+name real document types, not vague business outcomes.
 
 Rules you must follow without exception:
 - Maximum 120 words in the email body.
@@ -60,51 +65,65 @@ Rules you must follow without exception:
 - Address recipient by first name.
 - Sign off: William\\nLegora (no title, no phone number).
 - Plain text only — no HTML, no markdown, no bullet points.
+- Step 0 CTAs are soft questions ("Would you be interested in…"), NOT hyperlinks.
+- Step 4 CTAs include the link placeholder ([CALENDLY_LINK] or [WEBINAR_LINK]).
 - Return ONLY valid JSON, no prose before or after.
 """
 
 
 def _build_user_prompt(lead: dict, step: int) -> str:
+    from src.tools.practice_pain_library import get_pain_phrase
+
     first_name = lead.get("first_name", "there")
-    trigger_type = lead.get("trigger_type", "backlog")
-    tier = lead.get("firm_size_tier", "SMB")
+    title = lead.get("title", "")
+    primary_practice = lead.get("primary_practice_area", "Commercial")
+    tier = lead.get("tier") or lead.get("firm_size_tier", "SMB")
     country = lead.get("country", "")
     lawyer_count = lead.get("lawyer_count", 0)
     local_client = _get_local_client(country)
+    step4_reference = local_client or GLOBAL_REFERENCE_FIRMS
 
-    trigger_opening = TRIGGER_OPENINGS.get(trigger_type, TRIGGER_OPENINGS["backlog"])
+    pain_phrase = get_pain_phrase(primary_practice)
 
-    if tier == "SMB+":
-        cta = "direct 25-minute product walkthrough — book at [CALENDLY_LINK]"
-        cta_type = "demo"
-    else:
-        cta = "upcoming live demo webinar — sign up at [WEBINAR_LINK]"
-        cta_type = "webinar"
+    cta_type = "demo" if tier == "SMB+" else "webinar"
+    cta_link = "[CALENDLY_LINK]" if tier == "SMB+" else "[WEBINAR_LINK]"
+    cta_question = (
+        "Would you be interested in seeing a brief demo?"
+        if tier == "SMB+" else
+        "Would you be interested in joining one of our live demo webinars?"
+    )
 
-    client_line = ""
-    if local_client:
-        client_line = f"Firms like {local_client} are already using Legora to cut contract review time by 60%."
+    title_class = lead.get("title_classification")
+    is_senior = title and title_class != "junior"
+    title_line = f"As {title}, you're" if is_senior else "You're"
+    if not is_senior:
+        pain_phrase = "spending too much time manually reviewing and marking up contracts across every matter"
 
     step_instructions = {
-        0: f"""Write a first-touch email.
-Opening: "{trigger_opening}"
-Then: one sentence on what Legora does (AI contract review for law firms, faster + more accurate than manual review).
-{"Include: " + client_line if client_line else ""}
-CTA: invite them to the {cta}.
-Sign off as William\\nLegora.""",
+        0: f"""Write a first-touch email in peer-to-peer attorney voice.
+
+Structure:
+1. "I'm with Legora, the legal AI platform for {primary_practice} used by partners at {GLOBAL_REFERENCE_FIRMS}."
+2. "{title_line} probably still spending too much time {pain_phrase}."
+3. "I'd love to share the use cases that other attorneys are using heavily for similar work in your practice area and hear your thoughts."
+4. "{cta_question}"
+5. Sign off: William\\nLegora
+
+Do NOT open with a trigger reference. Do NOT include a hyperlink. Do NOT use "I hope this email finds you well" or any similar filler.""",
 
         4: f"""Write a follow-up email after an unanswered call attempt.
-Acknowledge: "I also tried reaching you by phone last week — no luck, so thought I'd try here again."
-Then briefly re-state Legora's value.
-{"Include: " + client_line if client_line else ""}
-CTA: {cta}.
-Sign off as William\\nLegora.""",
 
-        10: f"""Write a break-up email. Light, no pressure.
-Acknowledge you've reached out a few times.
+Structure:
+1. "I also tried reaching you by phone last week — no luck, so thought I'd try here again."
+2. One sentence referencing {primary_practice} work at firms like {step4_reference} and how Legora helps cut review time.
+3. Offer a concrete next step with the link: {cta_link}
+4. Sign off: William\\nLegora""",
+
+        10: f"""Write a break-up email. Light, no pressure, no CTA link.
+
+Acknowledge you've reached out a few times without hearing back.
 Leave the door open: "If the timing ever changes, I'll be here."
-No CTA link.
-Sign off as William\\nLegora.""",
+Sign off: William\\nLegora""",
     }
 
     subject = STEP_SUBJECTS[step].format(first_name=first_name)
@@ -112,10 +131,11 @@ Sign off as William\\nLegora.""",
     return f"""Write a step-{step} BDR email for Legora.
 
 Contact: {first_name} {lead.get('last_name', '')}
-Company: {lead.get('company_name', '')} ({lawyer_count} lawyers)
-Country: {country}
-Trigger: {trigger_type}
+Title: {title or 'unknown'}
+Company: {lead.get('company_name', '')} ({lawyer_count} lawyers, {country})
+Practice area: {primary_practice}
 Tier: {tier}
+Sequence step: {step}
 
 {step_instructions[step]}
 
@@ -129,7 +149,7 @@ Return ONLY this JSON (no other text):
   "word_count": 0
 }}
 
-Fill in the body and set word_count to the actual word count of the body."""
+Fill in the body. Set word_count to the actual word count of the body."""
 
 
 def write_email(lead: dict, step: int) -> dict:

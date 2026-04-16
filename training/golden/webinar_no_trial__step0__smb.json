@@ -3,8 +3,8 @@
   "step": 0,
   "expected": {
     "subject": "Priya, quick note from Legora",
-    "body": "Hi Priya,\n\nI noticed you joined our webinar last week — hoping it was useful.\n\nFirms like BAHR are already using Legora to cut contract review time by around 60%.\n\nWe run a live demo webinar each week — save a seat here: [WEBINAR_LINK].\n\nWilliam\nLegora",
+    "body": "Hi Priya,\n\nI'm with Legora, the legal AI platform for Employment used by partners at Goodwin and White & Case.\n\nYou're probably still spending too much time managing the manual review of employment contracts, settlement agreements, and restrictive covenants across matters.\n\nI'd love to share the use cases that other attorneys are using heavily for similar work in your practice area and hear your thoughts.\n\nWould you be interested in joining one of our live demo webinars?\n\nWilliam\nLegora",
     "cta_type": "webinar"
   },
-  "notes": "6-lawyer UK firm → SMB tier → webinar CTA. Webinar attendee but no trial means interest is warm but not hot."
+  "notes": "Helmsley & Co Senior Associate, 6 lawyers, UK. Junior title → SMB → webinar CTA. No title in opening since 'Senior Associate' = junior tier."
 }

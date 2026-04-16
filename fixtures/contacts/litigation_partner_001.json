@@ -1,0 +1,21 @@
+{
+  "id": "litigation_partner_001",
+  "_trigger_type": "demo_request",
+  "properties": {
+    "email": "john.sterling@sterlinglitigation.com",
+    "firstname": "John",
+    "lastname": "Sterling",
+    "jobtitle": "Chairman and CEO",
+    "company": "Sterling Litigation LLP",
+    "website": "sterlinglitigation.com",
+    "phone": "+1 212 555 0199",
+    "country": "United States",
+    "hs_lead_status": "NEW",
+    "lifecyclestage": "lead",
+    "hs_lead_source": "demo_request",
+    "demo_request_date__c": "2026-04-15T10:00:00Z",
+    "createdate": "2026-04-15T10:00:00Z",
+    "bdr_sequence_step": "0",
+    "bdr_trigger_type": "demo_request"
+  }
+}

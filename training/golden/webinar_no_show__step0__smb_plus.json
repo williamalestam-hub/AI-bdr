@@ -3,8 +3,8 @@
   "step": 0,
   "expected": {
     "subject": "James, quick note from Legora",
-    "body": "Hi James,\n\nI saw you registered for our recent webinar but couldn't make it — completely understandable.\n\nLegora is an AI contract review platform — firms use it to cut review time substantially without sacrificing accuracy.\n\nIf useful, grab a 25-minute walkthrough here: [CALENDLY_LINK].\n\nWilliam\nLegora",
+    "body": "Hi James,\n\nI'm with Legora, the legal AI platform for M&A used by partners at Goodwin and White & Case.\n\nAs Partner, M&A, you're probably still spending too much time guiding associates through repetitive NDA, purchase agreement, and disclosure document review deal after deal.\n\nI'd love to share the use cases that other attorneys are using heavily for similar work in your practice area and hear your thoughts.\n\nWould you be interested in seeing a brief demo?\n\nWilliam\nLegora",
     "cta_type": "demo"
   },
-  "notes": "BAHR is a real Legora client so we skip the local-client reference to avoid being awkward. 180 lawyers = SMB+ tier."
+  "notes": "BAHR M&A Partner, 180 lawyers, Norway. Senior title → SMB+ → demo CTA as soft question."
 }

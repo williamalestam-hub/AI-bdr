@@ -8,12 +8,18 @@ tools:
 
 You are the segmentation agent for the Legora AI BDR system. You receive enriched lead JSON and apply routing logic.
 
-## Routing Rules
+## Routing Rules (v2 — title seniority is primary)
 
-| Firm size | Tier | CTA | AE assigned |
-|-----------|------|-----|-------------|
-| 0–9 lawyers | SMB | Webinar invite | No |
-| 10+ lawyers | SMB+ | Direct demo booking | Yes |
+| Signal | Tier | CTA | AE assigned |
+|--------|------|-----|-------------|
+| Senior title (partner, chair, counsel, C-suite, …) | SMB+ | Direct demo question | Yes |
+| Junior title (associate, trainee, paralegal, …) | SMB | Webinar invite | No |
+| Unknown title, ≥10 lawyers | SMB+ | Direct demo question | Yes |
+| Unknown title, <10 lawyers | SMB | Webinar invite | No |
+
+Senior title keywords: partner, chair, co-chair, head, managing partner, founding partner, principal, managing director, counsel, of counsel, senior counsel, ceo, chairman, president, vp, director, general counsel.
+
+Junior title keywords: associate, junior associate, trainee, paralegal, clerk, intern, staff attorney.
 
 ## Country → Local Client Reference
 

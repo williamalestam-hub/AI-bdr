@@ -16,13 +16,22 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 FIRMS_FILE = REPO_ROOT / "fixtures" / "firms" / "firms.json"
 
 SYNTH_COUNTRIES = ["United Kingdom", "United States", "Australia", "Germany", "France", "Norway", "Canada"]
+SYNTH_CITIES = {
+    "United Kingdom": ("London", None),
+    "United States": ("New York", "NY"),
+    "Australia": ("Sydney", "NSW"),
+    "Germany": ("Frankfurt", None),
+    "France": ("Paris", None),
+    "Norway": ("Oslo", None),
+    "Canada": ("Toronto", "ON"),
+}
 SYNTH_PRACTICES = [
     ["Corporate", "M&A"],
     ["Commercial", "Corporate"],
     ["Litigation", "Dispute Resolution"],
     ["Real Estate", "Commercial"],
     ["Employment", "Commercial"],
-    ["IP", "Technology"],
+    ["IP Litigation", "IP"],
     ["Tax", "Corporate"],
     ["Banking & Finance", "Corporate"],
 ]
@@ -30,15 +39,17 @@ SYNTH_PRACTICES = [
 
 def _synthetic_firm(domain: str) -> dict:
     digest = hashlib.sha256(domain.encode()).digest()
-    # lawyer_count: 1–250, skewed toward smaller
     raw = int.from_bytes(digest[:2], "big") % 250 + 1
     country = SYNTH_COUNTRIES[digest[2] % len(SYNTH_COUNTRIES)]
     practice = SYNTH_PRACTICES[digest[3] % len(SYNTH_PRACTICES)]
+    city, state = SYNTH_CITIES.get(country, ("Unknown", None))
     return {
         "name": domain.split(".")[0].replace("-", " ").title() + " Law",
         "domain": domain,
         "lawyer_count": raw,
         "country": country,
+        "hq_city": city,
+        "hq_state": state,
         "practice_areas": practice,
         "_synthetic": True,
     }
@@ -76,6 +87,8 @@ class MockClayClient:
             "lawyer_count": int(data.get("lawyer_count") or data.get("employee_count") or 0),
             "practice_areas": practice_areas,
             "country": data.get("country") or data.get("hq_country") or "",
+            "hq_city": data.get("hq_city") or data.get("city") or "",
+            "hq_state": data.get("hq_state") or data.get("state") or None,
             "company_name": data.get("name") or data.get("company_name", ""),
             "company_domain": data.get("domain") or data.get("website", ""),
         }

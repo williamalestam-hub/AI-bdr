@@ -3,8 +3,8 @@
   "step": 0,
   "expected": {
     "subject": "Sophie, quick note from Legora",
-    "body": "Hi Sophie,\n\nI wanted to reach out as Legora has evolved a lot since you first came across us.\n\nFirms like BAHR are already using Legora to cut contract review time by around 60%.\n\nWe run a live demo webinar each week — save a seat here: [WEBINAR_LINK].\n\nWilliam\nLegora",
+    "body": "Hi Sophie,\n\nI'm with Legora, the legal AI platform for Litigation used by partners at Goodwin and White & Case.\n\nYou're probably still spending too much time overseeing associates manually reviewing pleadings, discovery documents, and case law deal after deal.\n\nI'd love to share the use cases that other attorneys are using heavily for similar work in your practice area and hear your thoughts.\n\nWould you be interested in joining one of our live demo webinars?\n\nWilliam\nLegora",
     "cta_type": "webinar"
   },
-  "notes": "4-lawyer UK chambers from late-2024 backlog. SMB webinar CTA, soft re-engagement tone."
+  "notes": "Barton Chambers Associate, 4 lawyers, UK. Junior title → SMB → webinar CTA. No title_line since associate = junior."
 }

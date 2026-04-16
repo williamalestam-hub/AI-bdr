@@ -1,18 +1,17 @@
 """
 Template-based email generator used when ANTHROPIC_API_KEY is not set.
 
-Produces emails that follow the same trigger / step / tier / country rules
-as the real Claude prompt, so the downstream pipeline (grading, digest,
-simulation) is fully exercisable with no external calls.
+Mirrors the new v2 lawyer-voice format so the downstream pipeline (grading,
+digest, simulation) is fully exercisable with no external calls.
 
-Every output body is prefixed with [TEMPLATE-MODE] so a template draft
-is never confused with a real LLM draft.
+Every output body is prefixed with [TEMPLATE-MODE] so it's never confused with
+a real LLM draft.
 """
 
 from src.agents.email_writer_agent import (
-    TRIGGER_OPENINGS,
     COUNTRY_CLIENT_MAP,
     STEP_SUBJECTS,
+    GLOBAL_REFERENCE_FIRMS,
 )
 
 
@@ -26,69 +25,69 @@ def _get_local_client(country: str) -> str | None:
     return None
 
 
-def _value_prop(local_client: str | None) -> str:
-    if local_client:
-        return (f"Firms like {local_client} are already using Legora to cut "
-                f"contract review time by around 60%.")
-    return ("Legora is an AI contract review platform — firms use it to cut "
-            "review time substantially without sacrificing accuracy.")
-
-
-def _step0_body(first_name: str, trigger_opening: str, value_prop: str,
-                cta_line: str) -> str:
-    return (
-        f"Hi {first_name},\n\n"
-        f"{trigger_opening}\n\n"
-        f"{value_prop}\n\n"
-        f"{cta_line}\n\n"
-        f"William\nLegora"
-    )
-
-
-def _step4_body(first_name: str, value_prop: str, cta_line: str) -> str:
-    return (
-        f"Hi {first_name},\n\n"
-        f"I also tried reaching you by phone last week — no luck, so thought I'd try here again.\n\n"
-        f"{value_prop}\n\n"
-        f"{cta_line}\n\n"
-        f"William\nLegora"
-    )
-
-
-def _step10_body(first_name: str) -> str:
-    return (
-        f"Hi {first_name},\n\n"
-        f"I've reached out a few times without hearing back, so I'll leave it there. "
-        f"If the timing ever changes, I'll be here.\n\n"
-        f"All the best,\n\n"
-        f"William\nLegora"
-    )
-
-
 def generate_email(lead: dict, step: int) -> dict:
+    from src.tools.practice_pain_library import get_pain_phrase
+
     first_name = lead.get("first_name") or "there"
-    trigger_type = lead.get("trigger_type", "backlog")
-    tier = lead.get("firm_size_tier", "SMB")
+    title = lead.get("title", "")
+    primary_practice = lead.get("primary_practice_area", "Commercial")
+    tier = lead.get("tier") or lead.get("firm_size_tier", "SMB")
     country = lead.get("country", "")
 
-    trigger_opening = TRIGGER_OPENINGS.get(trigger_type, TRIGGER_OPENINGS["backlog"])
     local_client = _get_local_client(country)
-    value_prop = _value_prop(local_client)
+    title_class = lead.get("title_classification")
+    pain_phrase = get_pain_phrase(primary_practice)
+    # Trim the "deal after deal / project after project" suffix for step-4 inline use
+    pain_short = pain_phrase.split(" deal after deal")[0].split(" project after project")[0].split(" matter after matter")[0]
 
-    if tier == "SMB+":
-        cta_line = "If useful, grab a 25-minute walkthrough here: [CALENDLY_LINK]."
-        cta_type = "demo"
-    else:
-        cta_line = "We run a live demo webinar each week — save a seat here: [WEBINAR_LINK]."
-        cta_type = "webinar"
+    # Senior titles get "As {title}, you're …"; junior or unknown get "You're …"
+    is_senior = title and title_class != "junior"
+    title_line = f"As {title}, you're" if is_senior else "You're"
+
+    # Associates do the reviewing themselves — use a first-person pain phrase
+    if not is_senior:
+        pain_phrase = f"manually reviewing and marking up contracts across every matter"
+
+    cta_type = "demo" if tier == "SMB+" else "webinar"
+    step4_reference = local_client or GLOBAL_REFERENCE_FIRMS
 
     if step == 0:
-        body = _step0_body(first_name, trigger_opening, value_prop, cta_line)
+        cta_question = (
+            "Would you be interested in seeing a brief demo?"
+            if tier == "SMB+"
+            else "Would you be interested in joining one of our live demo webinars?"
+        )
+        body = (
+            f"Hi {first_name},\n\n"
+            f"I'm with Legora, the legal AI platform for {primary_practice} "
+            f"used by partners at {GLOBAL_REFERENCE_FIRMS}.\n\n"
+            f"{title_line} probably still spending too much time {pain_phrase}.\n\n"
+            f"I'd love to share the use cases that other attorneys are using heavily "
+            f"for similar work in your practice area and hear your thoughts.\n\n"
+            f"{cta_question}\n\n"
+            f"William\nLegora"
+        )
+
     elif step == 4:
-        body = _step4_body(first_name, value_prop, cta_line)
+        cta_link = "[CALENDLY_LINK]" if tier == "SMB+" else "[WEBINAR_LINK]"
+        body = (
+            f"Hi {first_name},\n\n"
+            f"I also tried reaching you by phone last week — no luck, so thought I'd try here again.\n\n"
+            f"I work with {primary_practice} teams at firms like {step4_reference} — "
+            f"they're using Legora to cut the time spent {pain_short}.\n\n"
+            f"Would you have 25 minutes for a quick walkthrough? {cta_link}\n\n"
+            f"William\nLegora"
+        )
+
     elif step == 10:
-        body = _step10_body(first_name)
         cta_type = "none"
+        body = (
+            f"Hi {first_name},\n\n"
+            f"I've reached out a few times without hearing back, so I'll leave it there. "
+            f"If the timing ever changes, I'll be here.\n\n"
+            f"All the best,\n\n"
+            f"William\nLegora"
+        )
     else:
         raise ValueError(f"sequence_step must be 0, 4, or 10 (got {step})")
 

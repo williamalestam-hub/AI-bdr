@@ -20,11 +20,12 @@ TRIGGER_WEIGHTS = {
     "backlog": 5,
 }
 
-HIGH_VALUE_PRACTICE_KEYWORDS = {"corporate", "m&a", "commercial"}
+HIGH_VALUE_PRACTICE_KEYWORDS = {"corporate", "m&a", "litigation", "banking"}
 
 LOCAL_CLIENT_BONUS = 10
 LARGE_FIRM_BONUS = 10
 LARGE_FIRM_THRESHOLD = 50
+KNOWN_TITLE_BONUS = 10  # bonus when title is confirmed senior (not just inferred from count)
 
 
 def score_lead(enriched: dict, segmented: dict) -> dict:
@@ -36,6 +37,11 @@ def score_lead(enriched: dict, segmented: dict) -> dict:
     if tier_points:
         score += tier_points
         reasons.append(f"{tier} firm (+{tier_points})")
+
+    # Extra bonus when seniority comes from a confirmed title, not the lawyer-count fallback
+    if segmented.get("title_classification") == "senior":
+        score += KNOWN_TITLE_BONUS
+        reasons.append(f"Confirmed senior title (+{KNOWN_TITLE_BONUS})")
 
     trigger = enriched.get("trigger_type", "backlog")
     trigger_points = TRIGGER_WEIGHTS.get(trigger, 0)

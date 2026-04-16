@@ -31,7 +31,7 @@ sys.path.insert(0, str(REPO_ROOT))
 
 from src.agents.enrichment_agent import enrich_contact
 from src.agents.segmentation_agent import segment_lead
-from src.agents.email_writer_agent import write_email, FORBIDDEN_WORDS, TRIGGER_OPENINGS
+from src.agents.email_writer_agent import write_email, FORBIDDEN_WORDS
 
 
 GOLDEN_DIR = REPO_ROOT / "training" / "golden"
@@ -72,13 +72,29 @@ def grade_one(golden: dict) -> dict:
     lower = body_plain.lower()
     checks["no_forbidden_words"] = not any(w in lower for w in FORBIDDEN_WORDS)
 
-    trigger = enriched["trigger_type"]
-    expected_opening = TRIGGER_OPENINGS.get(trigger, "")
-    checks["trigger_opening_present"] = expected_opening.split("—")[0].strip().lower() in lower
+    # v2: step 0 uses "I'm with Legora, the legal AI platform for X"
+    # step 4+ still uses trigger context or call reference
+    if step == 0:
+        checks["legora_intro_present"] = (
+            "i'm with legora" in lower or "i am with legora" in lower
+        )
+    else:
+        # step 4: references the call attempt; step 10: soft close
+        if step == 4:
+            checks["call_reference_present"] = "tried reaching you by phone" in lower or "tried calling" in lower
+        checks["signoff_present_step4plus"] = "william" in lower and "legora" in lower
 
     checks["signoff_present"] = "william" in lower and "legora" in lower
 
-    if step < 10:
+    # v2 CTA rules:
+    # step 0: soft question (no link), CTA type expressed as a question
+    # step 4: link placeholder required
+    # step 10: no link
+    if step == 0:
+        checks["step0_soft_cta"] = (
+            "would you be interested" in lower or "would you have" in lower
+        )
+    elif step == 4:
         checks["cta_placeholder_present"] = (
             "[CALENDLY_LINK]" in body_plain or "[WEBINAR_LINK]" in body_plain
         )
@@ -93,7 +109,7 @@ def grade_one(golden: dict) -> dict:
     return {
         "fixture": fixture_id,
         "step": step,
-        "trigger": trigger,
+        "trigger": enriched["trigger_type"],
         "tier": segmented["tier"],
         "word_count": words,
         "similarity_to_golden": sim,

@@ -1,0 +1,10 @@
+{
+  "lead_fixture": "ip_chair_001",
+  "step": 0,
+  "expected": {
+    "subject": "Chris, quick note from Legora",
+    "body": "Hi Chris,\n\nI'm with Legora, the legal AI platform for IP Litigation used by partners at Goodwin and White & Case.\n\nAs Chair, IP Litigation Practice, you're probably still spending too much time managing associates buried in manually reviewing prior art and case law across complex patent disputes.\n\nI'd love to share the use cases that other attorneys are using heavily for similar work in your practice area and hear your thoughts.\n\nWould you be interested in seeing a brief demo?\n\nWilliam\nLegora",
+    "cta_type": "demo"
+  },
+  "notes": "Based on proven US BDR template. IP litigation-specific pain (prior art, case law, patent disputes). Chair = senior title."
+}

@@ -1,0 +1,22 @@
+{
+  "id": "ip_chair_001",
+  "_trigger_type": "webinar_no_show",
+  "properties": {
+    "email": "chris.nakamura@nakamuraiplaw.com",
+    "firstname": "Chris",
+    "lastname": "Nakamura",
+    "jobtitle": "Chair, IP Litigation Practice",
+    "company": "Nakamura IP Law",
+    "website": "nakamuraiplaw.com",
+    "phone": "+1 415 555 0155",
+    "country": "United States",
+    "hs_lead_status": "NEW",
+    "lifecyclestage": "lead",
+    "hs_lead_source": "webinar",
+    "webinar_registered": "true",
+    "webinar_attended": "false",
+    "createdate": "2026-04-13T09:00:00Z",
+    "bdr_sequence_step": "0",
+    "bdr_trigger_type": "webinar_no_show"
+  }
+}

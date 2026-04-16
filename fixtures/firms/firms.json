@@ -4,13 +4,17 @@
     "domain": "goodwinlaw.com",
     "lawyer_count": 1200,
     "country": "United States",
-    "practice_areas": ["Corporate", "M&A", "Technology", "Banking & Finance"]
+    "hq_city": "Boston",
+    "hq_state": "MA",
+    "practice_areas": ["Technology", "Corporate", "M&A", "Banking & Finance", "Litigation"]
   },
   "bahr.no": {
     "name": "BAHR",
     "domain": "bahr.no",
     "lawyer_count": 180,
     "country": "Norway",
+    "hq_city": "Oslo",
+    "hq_state": null,
     "practice_areas": ["Corporate", "M&A", "Banking & Finance", "Tax"]
   },
   "helmsleylaw.co.uk": {
@@ -18,6 +22,8 @@
     "domain": "helmsleylaw.co.uk",
     "lawyer_count": 6,
     "country": "United Kingdom",
+    "hq_city": "London",
+    "hq_state": null,
     "practice_areas": ["Employment", "Commercial"]
   },
   "hengeler.de": {
@@ -25,6 +31,8 @@
     "domain": "hengeler.de",
     "lawyer_count": 330,
     "country": "Germany",
+    "hq_city": "Frankfurt",
+    "hq_state": null,
     "practice_areas": ["Corporate", "M&A", "Banking & Finance", "Tax"]
   },
   "barton-chambers.co.uk": {
@@ -32,6 +40,8 @@
     "domain": "barton-chambers.co.uk",
     "lawyer_count": 4,
     "country": "United Kingdom",
+    "hq_city": "London",
+    "hq_state": null,
     "practice_areas": ["Litigation", "Criminal"]
   },
   "minterellison.com": {
@@ -39,6 +49,35 @@
     "domain": "minterellison.com",
     "lawyer_count": 850,
     "country": "Australia",
+    "hq_city": "Melbourne",
+    "hq_state": "VIC",
     "practice_areas": ["Corporate", "M&A", "Real Estate"]
+  },
+  "sterlinglitigation.com": {
+    "name": "Sterling Litigation LLP",
+    "domain": "sterlinglitigation.com",
+    "lawyer_count": 95,
+    "country": "United States",
+    "hq_city": "New York",
+    "hq_state": "NY",
+    "practice_areas": ["Litigation", "Bankruptcy & Restructuring"]
+  },
+  "obrienrealestatelaw.com": {
+    "name": "O'Brien Real Estate Law",
+    "domain": "obrienrealestatelaw.com",
+    "lawyer_count": 42,
+    "country": "United States",
+    "hq_city": "Chicago",
+    "hq_state": "IL",
+    "practice_areas": ["Real Estate", "Commercial"]
+  },
+  "nakamuraiplaw.com": {
+    "name": "Nakamura IP Law",
+    "domain": "nakamuraiplaw.com",
+    "lawyer_count": 60,
+    "country": "United States",
+    "hq_city": "San Francisco",
+    "hq_state": "CA",
+    "practice_areas": ["IP Litigation", "IP", "Technology"]
   }
 }

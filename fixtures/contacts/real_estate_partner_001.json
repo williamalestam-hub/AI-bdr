@@ -1,0 +1,20 @@
+{
+  "id": "real_estate_partner_001",
+  "_trigger_type": "event_lead",
+  "properties": {
+    "email": "robyn.obrien@obrienrealestatelaw.com",
+    "firstname": "Robyn",
+    "lastname": "O'Brien",
+    "jobtitle": "Real Estate Partner and Practice Group Co-Chair",
+    "company": "O'Brien Real Estate Law",
+    "website": "obrienrealestatelaw.com",
+    "phone": "+1 312 555 0177",
+    "country": "United States",
+    "hs_lead_status": "NEW",
+    "lifecyclestage": "lead",
+    "hs_lead_source": "event",
+    "createdate": "2026-04-14T15:00:00Z",
+    "bdr_sequence_step": "0",
+    "bdr_trigger_type": "event_lead"
+  }
+}
