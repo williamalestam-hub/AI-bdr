@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "hubspot": {
+      "command": "npx",
+      "args": ["-y", "@hubspot/mcp-server"],
+      "env": {
+        "HUBSPOT_ACCESS_TOKEN": "${HUBSPOT_ACCESS_TOKEN}"
+      }
+    },
+    "gmail": {
+      "command": "npx",
+      "args": ["-y", "@gptscript-ai/gmail-mcp-server"],
+      "env": {
+        "GMAIL_OAUTH_CLIENT_ID": "${GMAIL_OAUTH_CLIENT_ID}",
+        "GMAIL_OAUTH_CLIENT_SECRET": "${GMAIL_OAUTH_CLIENT_SECRET}",
+        "GMAIL_OAUTH_REFRESH_TOKEN": "${GMAIL_OAUTH_REFRESH_TOKEN}",
+        "GMAIL_FROM_ADDRESS": "${GMAIL_FROM_ADDRESS}"
+      }
+    },
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@slack/mcp-server"],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+        "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
+      }
+    }
+  }
+}
