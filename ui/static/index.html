@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legora BDR</title>
+<style>
+  /* ── tokens ─────────────────────────────────────────────── */
+  :root {
+    --primary:      #4f46e5;
+    --primary-dark: #3730a3;
+    --bg:           #f3f4f6;
+    --surface:      #ffffff;
+    --border:       #e5e7eb;
+    --text:         #111827;
+    --muted:        #6b7280;
+    --success:      #10b981;
+    --warning:      #f59e0b;
+    --danger:       #ef4444;
+    --smb-plus:     #7c3aed;
+    --smb:          #0891b2;
+    --radius:       8px;
+    --shadow:       0 1px 3px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.06);
+  }
+
+  /* ── reset ──────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+  button { cursor: pointer; font-family: inherit; font-size: 13px; }
+  select, input { font-family: inherit; font-size: 13px; }
+
+  /* ── header ─────────────────────────────────────────────── */
+  header {
+    background: var(--primary-dark);
+    color: #fff;
+    padding: 0 24px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.2);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-weight: 700; font-size: 16px; letter-spacing: -.3px; }
+  .logo span { opacity: .55; font-weight: 400; margin-left: 6px; font-size: 13px; }
+  .badges { display: flex; gap: 8px; margin-left: auto; }
+  .badge {
+    display: flex; align-items: center; gap: 5px;
+    background: rgba(255,255,255,.12);
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 12px; font-weight: 500;
+  }
+  .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+  .badge .dot.live  { background: var(--success); box-shadow: 0 0 0 2px rgba(16,185,129,.3); }
+  .badge .dot.mock  { background: var(--warning); }
+  .mode-chip {
+    background: rgba(255,255,255,.18);
+    border-radius: 4px; padding: 2px 8px;
+    font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+  }
+
+  /* ── tabs ───────────────────────────────────────────────── */
+  .tab-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    padding: 0 24px;
+    gap: 0;
+  }
+  .tab-btn {
+    background: none; border: none;
+    padding: 14px 20px;
+    font-size: 14px; font-weight: 500; color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  .tab-btn:hover { color: var(--primary); }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* ── layout ─────────────────────────────────────────────── */
+  .tab-panel { display: none; padding: 24px; max-width: 1100px; margin: 0 auto; }
+  .tab-panel.active { display: block; }
+
+  /* ── cards ──────────────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-weight: 600; font-size: 14px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ── form row ───────────────────────────────────────────── */
+  .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  select, input[type=text] {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 7px 10px; background: var(--bg); color: var(--text);
+    min-width: 200px;
+  }
+  select:focus, input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+
+  /* ── buttons ────────────────────────────────────────────── */
+  .btn {
+    border: none; border-radius: var(--radius);
+    padding: 8px 16px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: opacity .15s, filter .15s;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:active { opacity: .85; }
+  .btn-primary  { background: var(--primary); color: #fff; }
+  .btn-outline  { background: transparent; color: var(--primary);
+                  border: 1px solid var(--primary); }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; filter: none; }
+
+  /* ── tags ───────────────────────────────────────────────── */
+  .tag {
+    display: inline-block; border-radius: 4px;
+    padding: 2px 8px; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .4px;
+  }
+  .tag-smb-plus { background: #ede9fe; color: var(--smb-plus); }
+  .tag-smb      { background: #e0f2fe; color: var(--smb); }
+  .tag-demo     { background: #d1fae5; color: #065f46; }
+  .tag-webinar  { background: #fef3c7; color: #92400e; }
+  .tag-mock     { background: #f3f4f6; color: var(--muted); }
+  .tag-live     { background: #d1fae5; color: #065f46; }
+
+  /* ── score badge ────────────────────────────────────────── */
+  .score {
+    display: inline-block;
+    background: var(--primary); color: #fff;
+    border-radius: 20px; padding: 1px 10px;
+    font-size: 12px; font-weight: 700; min-width: 38px; text-align: center;
+  }
+
+  /* ── lead card (digest) ─────────────────────────────────── */
+  .lead-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .lead-card-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .lead-name { font-weight: 600; font-size: 14px; }
+  .lead-meta { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .lead-reasons { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .email-preview {
+    background: var(--bg); border-radius: var(--radius);
+    padding: 12px 14px; font-size: 13px;
+    white-space: pre-wrap; word-break: break-word;
+    border-left: 3px solid var(--primary);
+  }
+  .email-subject { font-weight: 600; margin-bottom: 6px; font-size: 13px; }
+
+  /* ── sequence timeline ──────────────────────────────────── */
+  .timeline { display: flex; flex-direction: column; gap: 12px; }
+  .timeline-item {
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .timeline-marker {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .tm-email { background: #ede9fe; color: var(--smb-plus); }
+  .tm-call  { background: #fef3c7; color: #92400e; }
+  .timeline-body { flex: 1; }
+  .timeline-label { font-weight: 600; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+
+  /* ── stats row ──────────────────────────────────────────── */
+  .stats-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .stat-card {
+    flex: 1; min-width: 110px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-num { font-size: 28px; font-weight: 700; color: var(--primary); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── table ──────────────────────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600;
+       text-transform: uppercase; letter-spacing: .5px; color: var(--muted);
+       border-bottom: 1px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
+
+  /* ── grade results ──────────────────────────────────────── */
+  .grade-pass { color: var(--success); font-weight: 700; }
+  .grade-fail { color: var(--danger); font-weight: 700; }
+  .check-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .check-chip {
+    font-size: 11px; border-radius: 4px; padding: 1px 6px;
+  }
+  .check-ok   { background: #d1fae5; color: #065f46; }
+  .check-fail { background: #fee2e2; color: #991b1b; }
+
+  /* ── loader ─────────────────────────────────────────────── */
+  .loader {
+    display: none; align-items: center; gap: 8px;
+    color: var(--muted); font-size: 13px; padding: 12px 0;
+  }
+  .loader.active { display: flex; }
+  .spinner {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── empty state ────────────────────────────────────────── */
+  .empty { text-align: center; padding: 40px; color: var(--muted); }
+  .empty-icon { font-size: 32px; margin-bottom: 8px; }
+
+  /* ── misc ───────────────────────────────────────────────── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .text-muted { color: var(--muted); }
+  .monospace { font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; font-size: 12px; }
+  .mb-12 { margin-bottom: 12px; }
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase;
+                   letter-spacing: .5px; color: var(--muted); margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────────────────────────── -->
+<header>
+  <div class="logo">Legora BDR <span>Agent Dashboard</span></div>
+  <div class="badges" id="header-badges">
+    <div class="badge"><div class="dot" id="dot-anthropic"></div><span id="lbl-anthropic">Anthropic</span></div>
+    <div class="badge"><div class="dot" id="dot-hubspot"></div><span id="lbl-hubspot">HubSpot</span></div>
+    <div class="badge"><div class="dot" id="dot-clay"></div><span id="lbl-clay">Clay</span></div>
+    <div class="mode-chip" id="mode-chip">—</div>
+  </div>
+</header>
+
+<!-- ── TAB BAR ────────────────────────────────────────────────────────── -->
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('test')">Test</button>
+  <button class="tab-btn"       onclick="switchTab('dashboard')">Dashboard</button>
+  <button class="tab-btn"       onclick="switchTab('config')">Config</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- TAB 1 — TEST                                                          -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<section class="tab-panel active" id="tab-test">
+
+  <!-- Run pipeline -->
+  <div class="card">
+    <div class="card-title">▶ Run Pipeline</div>
+    <div class="row mb-12">
+      <button class="btn btn-primary" onclick="runPipeline()">Run full pipeline</button>
+      <span class="text-muted">Fetches all fixture leads → enriches → segments → drafts emails → ranks</span>
+    </div>
+    <div class="loader" id="loader-pipeline"><div class="spinner"></div> Running pipeline…</div>
+    <div id="pipeline-result"></div>
+  </div>
+
+  <!-- Simulate sequence -->
+  <div class="card">
+    <div class="card-title">📅 Simulate 10-day Sequence</div>
+    <div class="row mb-12">
+      <select id="sim-fixture"></select>
+      <button class="btn btn-primary" onclick="simulate()">Simulate</button>
+    </div>
+    <div class="loader" id="loader-sim"><div class="spinner"></div> Simulating…</div>
+    <div id="sim-result"></div>
+  </div>
+
+  <!-- Write single email -->
+  <div class="card">
+    <div class="card-title">✉️ Write Email</div>
+    <div class="row mb-12">
+      <select id="email-fixture"></select>
+      <select id="email-step">
+        <option value="0">Step 0 — First touch</option>
+        <option value="4">Step 4 — Follow-up</option>
+        <option value="10">Step 10 — Break-up</option>
+      </select>
+      <button class="btn btn-primary" onclick="writeEmail()">Generate</button>
+    </div>
+    <div class="loader" id="loader-email"><div class="spinner"></div> Writing…</div>
+    <div id="email-result"></div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- TAB 2 — DASHBOARD                                                     -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<section class="tab-panel" id="tab-dashboard">
+
+  <!-- Stats -->
+  <div class="stats-row" id="dash-stats">
+    <div class="stat-card"><div class="stat-num" id="stat-total">—</div><div class="stat-label">Total Leads</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-smb-plus">—</div><div class="stat-label">SMB+</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-smb">—</div><div class="stat-label">SMB</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-runs">—</div><div class="stat-label">Pipeline Runs</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-golden">—</div><div class="stat-label">Golden Examples</div></div>
+  </div>
+
+  <!-- Lead table -->
+  <div class="card">
+    <div class="card-title" style="justify-content:space-between">
+      <span>All Leads</span>
+      <button class="btn btn-outline btn-sm" onclick="loadDashboard()">↻ Refresh</button>
+    </div>
+    <div id="lead-table-wrap">
+      <div class="empty"><div class="empty-icon">📋</div>Click Refresh to load leads</div>
+    </div>
+  </div>
+
+  <!-- Recent runs -->
+  <div class="card">
+    <div class="card-title">Recent Pipeline Runs</div>
+    <div id="runs-list">
+      <div class="empty"><div class="empty-icon">🕒</div>No runs yet — use the Test tab to run the pipeline</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- TAB 3 — CONFIG                                                        -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<section class="tab-panel" id="tab-config">
+
+  <!-- Service status -->
+  <div class="card">
+    <div class="card-title">Service Status</div>
+    <div id="service-detail">Loading…</div>
+  </div>
+
+  <!-- Grader -->
+  <div class="card">
+    <div class="card-title">Email Grader</div>
+    <div class="row mb-12">
+      <button class="btn btn-primary" onclick="runGrade()">Run Grader</button>
+      <span class="text-muted">Checks all golden examples against the current agent output</span>
+    </div>
+    <div class="loader" id="loader-grade"><div class="spinner"></div> Grading…</div>
+    <div id="grade-result"></div>
+  </div>
+
+  <!-- Golden examples -->
+  <div class="card">
+    <div class="card-title">Golden Examples</div>
+    <div id="golden-list">Loading…</div>
+  </div>
+
+</section>
+
+<!-- JS placeholder — filled in next step -->
+<script>
+// ── state ────────────────────────────────────────────────────────────────
+let contacts = [];
+
+// ── init ─────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadStatus();
+  loadContacts();
+  loadDashboard();
+  loadGolden();
+});
+
+// ── tab switching ─────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    const tabs = ['test','dashboard','config'];
+    b.classList.toggle('active', tabs[i] === name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === `tab-${name}`);
+  });
+}
+
+// ── helpers ───────────────────────────────────────────────────────────────
+const api = (path, opts) =>
+  fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts })
+    .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)));
+
+function loading(id, on) {
+  document.getElementById(id).classList.toggle('active', on);
+}
+
+function tierTag(tier) {
+  return tier === 'SMB+'
+    ? `<span class="tag tag-smb-plus">SMB+</span>`
+    : `<span class="tag tag-smb">SMB</span>`;
+}
+
+function ctaTag(cta) {
+  if (cta === 'demo')    return `<span class="tag tag-demo">Demo</span>`;
+  if (cta === 'webinar') return `<span class="tag tag-webinar">Webinar</span>`;
+  return `<span class="tag tag-mock">—</span>`;
+}
+
+function triggerLabel(t) {
+  return { demo_request:'Demo request', webinar_no_show:'Webinar no-show',
+           webinar_no_trial:'Webinar no-trial', event_lead:'Event lead',
+           backlog:'Backlog' }[t] || t;
+}
+
+function escHtml(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── STATUS ────────────────────────────────────────────────────────────────
+function loadStatus() {
+  api('/api/status').then(data => {
+    const m = data.mode || {};
+    document.getElementById('mode-chip').textContent = (m.BDR_MODE || 'mock').toUpperCase();
+
+    function setDot(id, lblId, svc) {
+      const live = m[svc] === 'real';
+      const dot  = document.getElementById(id);
+      const lbl  = document.getElementById(lblId);
+      dot.className = `dot ${live ? 'live' : 'mock'}`;
+      if (!live) lbl.style.opacity = '.6';
+    }
+    setDot('dot-anthropic','lbl-anthropic','llm');
+    setDot('dot-hubspot',  'lbl-hubspot',  'hubspot');
+    setDot('dot-clay',     'lbl-clay',     'clay');
+
+    // Config tab detail
+    document.getElementById('service-detail').innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:10px">
+        ${[['Anthropic (LLM)', m.llm],['HubSpot', m.hubspot],['Clay API', m.clay]]
+          .map(([name, status]) => `
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="dot ${status==='real'?'live':'mock'}" style="width:10px;height:10px"></div>
+            <span style="font-weight:600;width:160px">${name}</span>
+            <span class="tag ${status==='real'?'tag-live':'tag-mock'}">${status || 'mock'}</span>
+          </div>`).join('')}
+        <hr class="divider">
+        <div style="display:flex;gap:16px;font-size:13px;color:var(--muted)">
+          <span>📂 ${data.fixture_count} fixtures</span>
+          <span>⭐ ${data.golden_count} golden examples</span>
+          <span>🕒 ${data.run_count} pipeline runs</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">
+          To enable a real service: set the relevant env var and restart.<br>
+          e.g. <code style="background:var(--bg);padding:1px 5px;border-radius:3px">ANTHROPIC_API_KEY=sk-... python ui/app.py</code>
+        </div>
+      </div>`;
+  }).catch(console.error);
+}
+
+// ── CONTACTS ──────────────────────────────────────────────────────────────
+function loadContacts() {
+  api('/api/contacts').then(data => {
+    contacts = data;
+    const opts = data.map(c =>
+      `<option value="${c.id}">${c.name} — ${c.company}</option>`
+    ).join('');
+    document.getElementById('sim-fixture').innerHTML   = opts;
+    document.getElementById('email-fixture').innerHTML = opts;
+  });
+}
+
+// ── PIPELINE ──────────────────────────────────────────────────────────────
+function runPipeline() {
+  loading('loader-pipeline', true);
+  document.getElementById('pipeline-result').innerHTML = '';
+  api('/api/pipeline/run', { method: 'POST' })
+    .then(renderDigest)
+    .catch(e => showError('pipeline-result', e))
+    .finally(() => loading('loader-pipeline', false));
+}
+
+function renderDigest(data) {
+  const el = document.getElementById('pipeline-result');
+  if (!data.digest?.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🎉</div>No leads queued</div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <span style="font-weight:600">${data.total_queued} leads queued</span>
+      <span class="text-muted">·</span>
+      <span class="text-muted">${data.run_at?.slice(0,19).replace('T',' ')} UTC</span>
+      ${data.errors?.length ? `<span style="color:var(--danger)">${data.errors.length} error(s)</span>` : ''}
+    </div>
+    ${data.digest.map((entry, i) => renderLeadCard(entry, i+1)).join('')}`;
+}
+
+function renderLeadCard(entry, rank) {
+  const d = entry.email_draft || {};
+  const bodyClean = (d.body || '').replace('[TEMPLATE-MODE] ', '');
+  return `
+    <div class="lead-card">
+      <div class="lead-card-header">
+        <span class="score">${entry.priority_score}</span>
+        <span class="lead-name">${escHtml(entry.name)}</span>
+        <span class="text-muted">—</span>
+        <span>${escHtml(entry.company)}</span>
+        ${tierTag(entry.tier)}
+        ${ctaTag(entry.email_draft?.cta_type)}
+      </div>
+      <div class="lead-meta">
+        ${triggerLabel(entry.trigger_type)} · Step ${entry.sequence_step}
+        ${entry.priority_reasons?.length ? ' · ' + entry.priority_reasons.join(', ') : ''}
+      </div>
+      <div class="email-subject">Subject: ${escHtml(d.subject)}</div>
+      <div class="email-preview">${escHtml(bodyClean)}</div>
+    </div>`;
+}
+
+// ── SIMULATE ──────────────────────────────────────────────────────────────
+function simulate() {
+  const fixture_id = document.getElementById('sim-fixture').value;
+  loading('loader-sim', true);
+  document.getElementById('sim-result').innerHTML = '';
+  api('/api/simulate', { method:'POST', body: JSON.stringify({ fixture_id }) })
+    .then(renderSequence)
+    .catch(e => showError('sim-result', e))
+    .finally(() => loading('loader-sim', false));
+}
+
+function renderSequence(data) {
+  const l = data.lead;
+  const DAY_LABELS = { 0:'Day 0', 2:'Day 2', 4:'Day 4', 7:'Day 7', 10:'Day 10' };
+  document.getElementById('sim-result').innerHTML = `
+    <div style="margin-bottom:14px">
+      <strong>${escHtml(l.name)}</strong>
+      <span class="text-muted"> — ${escHtml(l.company)}</span>
+      ${tierTag(l.tier)}
+      <span class="text-muted" style="margin-left:6px">${escHtml(l.title)}</span>
+      <br>
+      <span class="text-muted" style="font-size:12px">
+        ${escHtml(l.primary_practice)} · ${l.lawyer_count} lawyers · ${escHtml(l.country)}
+      </span>
+    </div>
+    <div class="timeline">
+      ${data.steps.map(s => `
+        <div class="timeline-item">
+          <div class="timeline-marker ${s.type === 'email' ? 'tm-email' : 'tm-call'}">
+            ${s.type === 'email' ? '✉' : '📞'}
+          </div>
+          <div class="timeline-body">
+            <div class="timeline-label">${DAY_LABELS[s.day] || `Day ${s.day}`}
+              ${s.type === 'email'
+                ? ` · Email · <span class="text-muted">${escHtml(s.data.subject)}</span>`
+                : ' · Voice call (Phase 2 stub)'}
+            </div>
+            ${s.type === 'email'
+              ? `<div class="email-preview">${escHtml((s.data.body||'').replace('[TEMPLATE-MODE] ',''))}</div>`
+              : `<div class="email-preview" style="border-left-color:var(--warning)">${escHtml(s.data.script)}</div>`
+            }
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+// ── WRITE EMAIL ───────────────────────────────────────────────────────────
+function writeEmail() {
+  const fixture_id = document.getElementById('email-fixture').value;
+  const step       = +document.getElementById('email-step').value;
+  loading('loader-email', true);
+  document.getElementById('email-result').innerHTML = '';
+  api('/api/email', { method:'POST', body: JSON.stringify({ fixture_id, step }) })
+    .then(data => {
+      const l = data.lead;
+      const e = data.email;
+      const bodyClean = (e.body || '').replace('[TEMPLATE-MODE] ', '');
+      document.getElementById('email-result').innerHTML = `
+        <div style="margin-bottom:10px">
+          <strong>${escHtml(l.name)}</strong> · ${escHtml(l.title)} · ${escHtml(l.company)}
+          ${tierTag(l.tier)} ${ctaTag(e.cta_type)}
+          <span class="text-muted" style="font-size:12px;margin-left:6px">${e.word_count} words</span>
+        </div>
+        <div class="email-subject">Subject: ${escHtml(e.subject)}</div>
+        <div class="email-preview">${escHtml(bodyClean)}</div>
+        ${e._source === 'mock_anthropic' ? `<div style="margin-top:6px;font-size:11px;color:var(--muted)">Template mode — set ANTHROPIC_API_KEY for real Claude output</div>` : ''}`;
+    })
+    .catch(e => showError('email-result', e))
+    .finally(() => loading('loader-email', false));
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────
+function loadDashboard() {
+  Promise.all([api('/api/contacts'), api('/api/runs'), api('/api/status')])
+    .then(([contacts, runs, status]) => {
+      // Stats (we need a pipeline run for tier breakdown)
+      document.getElementById('stat-total').textContent  = contacts.length;
+      document.getElementById('stat-runs').textContent   = status.run_count;
+      document.getElementById('stat-golden').textContent = status.golden_count;
+
+      // Get tier counts from most recent run if available
+      if (runs.length) {
+        api(`/api/runs/${runs[0].filename}`).then(run => {
+          const plus = run.digest?.filter(d => d.tier === 'SMB+').length || 0;
+          const smb  = run.digest?.filter(d => d.tier === 'SMB').length || 0;
+          document.getElementById('stat-smb-plus').textContent = plus;
+          document.getElementById('stat-smb').textContent      = smb;
+        });
+      } else {
+        document.getElementById('stat-smb-plus').textContent = '—';
+        document.getElementById('stat-smb').textContent      = '—';
+      }
+
+      // Lead table
+      document.getElementById('lead-table-wrap').innerHTML = contacts.length ? `
+        <table>
+          <thead><tr>
+            <th>Name</th><th>Title</th><th>Company</th><th>Trigger</th><th>Step</th>
+          </tr></thead>
+          <tbody>
+            ${contacts.map(c => `
+              <tr>
+                <td style="font-weight:500">${escHtml(c.name)}</td>
+                <td class="text-muted">${escHtml(c.title)}</td>
+                <td>${escHtml(c.company)}</td>
+                <td>${triggerLabel(c.trigger)}</td>
+                <td>${c.step}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>` : `<div class="empty"><div class="empty-icon">📋</div>No fixtures found</div>`;
+
+      // Recent runs
+      document.getElementById('runs-list').innerHTML = runs.length ? `
+        <table>
+          <thead><tr><th>Run</th><th>Leads</th><th>Errors</th><th>Mode</th></tr></thead>
+          <tbody>
+            ${runs.map(r => `
+              <tr>
+                <td class="monospace text-muted">${r.run_at?.slice(0,19).replace('T',' ')}</td>
+                <td><strong>${r.total_queued}</strong> <span class="text-muted">/ ${r.total_fetched} fetched</span></td>
+                <td>${r.errors ? `<span style="color:var(--danger)">${r.errors}</span>` : '—'}</td>
+                <td><span class="tag tag-mock">${r.mode?.BDR_MODE || 'mock'}</span></td>
+              </tr>`).join('')}
+          </tbody>
+        </table>` : `<div class="empty"><div class="empty-icon">🕒</div>No pipeline runs yet</div>`;
+    });
+}
+
+// ── GRADER ────────────────────────────────────────────────────────────────
+function runGrade() {
+  loading('loader-grade', true);
+  document.getElementById('grade-result').innerHTML = '';
+  api('/api/grade')
+    .then(data => {
+      const summary = `<div style="margin-bottom:12px;font-size:14px">
+        <strong>${data.passed} / ${data.total}</strong> golden examples pass all checks
+        ${data.passed === data.total
+          ? ' <span style="color:var(--success)">✓ All passing</span>'
+          : ` <span style="color:var(--danger)">— ${data.total - data.passed} failing</span>`}
+      </div>`;
+
+      const rows = data.results.map(r => {
+        if (r.error) return `
+          <tr>
+            <td class="monospace">${escHtml(r.fixture)}</td>
+            <td colspan="5" style="color:var(--danger)">${escHtml(r.error)}</td>
+          </tr>`;
+
+        const checks = Object.entries(r.checks || {}).map(([k, v]) =>
+          `<span class="check-chip ${v ? 'check-ok' : 'check-fail'}">${v ? '✓' : '✗'} ${k.replace(/_/g,' ')}</span>`
+        ).join('');
+
+        return `
+          <tr>
+            <td class="monospace" style="font-size:12px">${escHtml(r.fixture)}</td>
+            <td>${tierTag(r.tier)}</td>
+            <td>${r.word_count}</td>
+            <td>${(r.similarity * 100).toFixed(0)}%</td>
+            <td class="${r.passed ? 'grade-pass' : 'grade-fail'}">${r.passed ? '✓' : '✗'}</td>
+            <td><div class="check-list">${checks}</div></td>
+          </tr>`;
+      }).join('');
+
+      document.getElementById('grade-result').innerHTML = `${summary}
+        <table>
+          <thead><tr><th>Fixture</th><th>Tier</th><th>Words</th><th>Match</th><th>Pass</th><th>Checks</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    })
+    .catch(e => showError('grade-result', e))
+    .finally(() => loading('loader-grade', false));
+}
+
+// ── GOLDEN ────────────────────────────────────────────────────────────────
+function loadGolden() {
+  api('/api/golden').then(data => {
+    document.getElementById('golden-list').innerHTML = data.length ? `
+      <table>
+        <thead><tr><th>File</th><th>Step</th><th>CTA</th><th>Subject</th><th>Notes</th></tr></thead>
+        <tbody>
+          ${data.map(g => `
+            <tr>
+              <td class="monospace" style="font-size:12px">${escHtml(g.filename)}</td>
+              <td>${g.step}</td>
+              <td>${ctaTag(g.cta_type)}</td>
+              <td style="max-width:240px">${escHtml(g.subject)}</td>
+              <td class="text-muted" style="font-size:12px">${escHtml(g.notes)}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>` : `<div class="empty"><div class="empty-icon">⭐</div>No golden examples yet</div>`;
+  });
+}
+
+// ── error helper ──────────────────────────────────────────────────────────
+function showError(id, err) {
+  const msg = err?.detail || err?.message || JSON.stringify(err);
+  document.getElementById(id).innerHTML =
+    `<div style="color:var(--danger);padding:10px;background:#fee2e2;border-radius:6px">
+      ⚠ ${escHtml(msg)}
+    </div>`;
+}
+</script>
+</body>
+</html>
