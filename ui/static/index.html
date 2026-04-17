@@ -369,6 +369,11 @@
 
 <!-- JS placeholder — filled in next step -->
 <script>
+// Set API_BASE to your Railway/Render URL when hosting the UI on GitHub Pages.
+// Example: const API_BASE = 'https://my-bdr.up.railway.app';
+// Leave empty for same-origin (local dev or when serving from the FastAPI app).
+const API_BASE = '';
+
 // ── state ────────────────────────────────────────────────────────────────
 let contacts = [];
 
@@ -393,7 +398,7 @@ function switchTab(name) {
 
 // ── helpers ───────────────────────────────────────────────────────────────
 const api = (path, opts) =>
-  fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts })
+  fetch(API_BASE + path, { headers: { 'Content-Type': 'application/json' }, ...opts })
     .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)));
 
 function loading(id, on) {

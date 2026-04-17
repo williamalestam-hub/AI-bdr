@@ -23,6 +23,7 @@ sys.path.insert(0, str(REPO_ROOT))
 os.environ.setdefault("BDR_MODE", "mock")
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -40,6 +41,12 @@ GOLDEN_DIR   = REPO_ROOT / "training" / "golden"
 TRAINING_RUNS_DIR = REPO_ROOT / "training" / "runs"
 
 app = FastAPI(title="Legora BDR", docs_url=None, redoc_url=None)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")
 
 
@@ -330,4 +337,6 @@ if __name__ == "__main__":
     print(f"\n  Legora BDR UI")
     print(f"  Mode: {describe_mode()}")
     print(f"  Open: http://localhost:8000\n")
-    uvicorn.run("ui.app:app", host="0.0.0.0", port=8000, reload=True, app_dir=str(REPO_ROOT))
+    port = int(os.getenv("PORT", 8000))
+    reload = os.getenv("RAILWAY_ENVIRONMENT") is None
+    uvicorn.run("ui.app:app", host="0.0.0.0", port=port, reload=reload, app_dir=str(REPO_ROOT))
